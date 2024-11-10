@@ -64,7 +64,7 @@ public class OrderService {
     private static void validateSellingAssetSize(Double totalRequiredSize,
                                                  Asset sellingAsset,
                                                  boolean compareSize) {
-        if (sellingAsset == null || sellingAsset.getUsableSize().compareTo(totalRequiredSize) < 0
+        if (sellingAsset == null || (!compareSize && sellingAsset.getUsableSize().compareTo(totalRequiredSize) < 0)
                 || (compareSize && sellingAsset.getSize().compareTo(totalRequiredSize) < 0)) {
             throw new AssetUsableSizeNotEnoughException("Insufficient Asset Usable Size");
         }
