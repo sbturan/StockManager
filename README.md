@@ -39,7 +39,7 @@ This is a Spring Boot application for managing stocks, assets, and orders in a f
 
 Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/stock-manager.git
+   git clone https://github.com/sbturan/StockManager.git
    cd stock-manager
    ```
 
