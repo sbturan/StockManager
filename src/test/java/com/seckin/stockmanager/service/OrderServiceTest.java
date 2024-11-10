@@ -120,16 +120,24 @@ class OrderServiceTest {
         Long orderId = 1L;
         Order order = new Order();
         order.setId(orderId);
+        order.setCustomerId(1L);
         order.setStatus(OrderStatus.PENDING);
+        order.setOrderSide(OrderSide.BUY);
+        order.setSize(10.0);
+        order.setPrize(10.0);
+        order.setAssetName("test");
+        Asset sellingAsset = new Asset(1L, "test", 1000.0, 1000.0);
 
         when(orderRepository.findByIdAndStatus(orderId, OrderStatus.PENDING)).thenReturn(Optional.of(order));
         when(customerService.getCustomer(order.getCustomerId())).thenReturn(new Customer("testUser", "password"));
+        when(assetService.getAssetWithLock(1L, TRY_ASSET_NAME)).thenReturn(sellingAsset);
         doNothing().when(customerService).validateUserAuthenticated(anyString(), any(Authentication.class));
 
         orderService.deleteOrder(orderId, authentication);
 
         assertEquals(OrderStatus.CANCELLED, order.getStatus());
         verify(orderRepository, times(1)).save(order);
+        verify(assetService, times(1)).saveAsset(sellingAsset);
     }
 
     @Test

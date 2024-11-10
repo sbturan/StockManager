@@ -99,6 +99,7 @@ public class OrderService {
                 .toList();
     }
 
+    @Transactional
     public void deleteOrder(Long orderId, Authentication authentication) {
         Order order =
                 orderRepository.findByIdAndStatus(orderId, OrderStatus.PENDING).orElseThrow(() ->
@@ -106,6 +107,14 @@ public class OrderService {
         String customerUserName =
                 customerService.getCustomer(order.getCustomerId()).getUsername();
         customerService.validateUserAuthenticated(customerUserName, authentication);
+        String sellingAssetName =
+                getSellingAssetName(order.getOrderSide(), order.getAssetName());
+        Double totalRequiredSize = sellingAssetName.equals(TRY_ASSET_NAME) ?
+                order.getPrize() * order.getSize() : order.getSize();
+        Asset sellingAsset = assetService.getAssetWithLock(order.getCustomerId(),
+                sellingAssetName);
+        sellingAsset.setUsableSize(sellingAsset.getUsableSize() + totalRequiredSize);
+        assetService.saveAsset(sellingAsset);
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
     }
