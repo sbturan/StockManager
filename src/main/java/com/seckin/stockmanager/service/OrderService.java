@@ -46,7 +46,7 @@ public class OrderService {
         }
         Double totalRequiredSize = sellingAssetName.equals(TRY_ASSET_NAME) ?
                 orderDto.prize * orderDto.orderSize : orderDto.orderSize;
-        validateSellingAssetSize(totalRequiredSize, sellingAsset, false);
+        validateSellingAssetUsableSize(totalRequiredSize, sellingAsset);
         Order createdOrder = orderRepository.save(orderDto.toOrder(customerId));
         sellingAsset.setUsableSize(sellingAsset.getUsableSize() - totalRequiredSize);
 
@@ -61,11 +61,16 @@ public class OrderService {
 
     }
 
+    private static void validateSellingAssetUsableSize(Double totalRequiredSize,
+                                                       Asset sellingAsset) {
+        if (sellingAsset == null || sellingAsset.getUsableSize().compareTo(totalRequiredSize) < 0) {
+            throw new AssetUsableSizeNotEnoughException("Insufficient Asset Usable Size");
+        }
+    }
+
     private static void validateSellingAssetSize(Double totalRequiredSize,
-                                                 Asset sellingAsset,
-                                                 boolean compareSize) {
-        if (sellingAsset == null || (!compareSize && sellingAsset.getUsableSize().compareTo(totalRequiredSize) < 0)
-                || (compareSize && sellingAsset.getSize().compareTo(totalRequiredSize) < 0)) {
+                                                 Asset sellingAsset) {
+        if (sellingAsset == null || sellingAsset.getSize().compareTo(totalRequiredSize) < 0) {
             throw new AssetUsableSizeNotEnoughException("Insufficient Asset Usable Size");
         }
     }
@@ -122,7 +127,7 @@ public class OrderService {
                 sellingAssetName);
         Double totalRequiredSize = sellingAssetName.equals(TRY_ASSET_NAME) ?
                 order.getPrize() * order.getSize() : order.getSize();
-        validateSellingAssetSize(totalRequiredSize, sellingAsset, true);
+        validateSellingAssetSize(totalRequiredSize, sellingAsset);
         order.setStatus(OrderStatus.MATCHED);
         Asset buyingAsset = assetService.getAssetWithLock(order.getCustomerId(),
                 buyingAssetName);
