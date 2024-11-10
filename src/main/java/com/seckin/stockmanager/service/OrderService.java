@@ -133,7 +133,6 @@ public class OrderService {
         Double sellingSize = totalRequiredSize;
         Double buyingSize = sellingAssetName.equals(TRY_ASSET_NAME) ? order.getSize() :
                 order.getPrize() * order.getSize();
-        sellingAsset.setUsableSize(sellingAsset.getUsableSize() - sellingSize);
         sellingAsset.setSize(sellingAsset.getSize() - sellingSize);
         buyingAsset.setUsableSize(buyingAsset.getUsableSize() + buyingSize);
         buyingAsset.setSize(buyingAsset.getSize() + buyingSize);
