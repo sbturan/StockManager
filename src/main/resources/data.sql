@@ -1,0 +1,1 @@
+INSERT INTO customer (username, password, role) values ('admin', '{noop}password', 'ADMIN')
