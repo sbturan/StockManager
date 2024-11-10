@@ -53,11 +53,7 @@ Using Docker
    ```   
 2. Run the application:
    ```bash
-   docker run -d --name stock-manager -p 8080:8080 stock-manager
-   ```
-3. Stop Application
-   ```bash
-   docker stop  stock-manager 
+   docker run --rm -it --name stock-manager -p 8080:8080 stock-manager
    ```
 
 ## Running Tests
@@ -77,7 +73,8 @@ To build a standalone JAR file:
 After Running the application, to access embedded H2 db:\
 Visit url: http://localhost:8080/h2-console
 ```
-JDBC URL: jdbc:h2:mem:testdb 
+Driver class : org.h2.Driver
+JDBC URL : jdbc:h2:mem:testdb 
 USERNAME : sa 
 Password : password
 ```
